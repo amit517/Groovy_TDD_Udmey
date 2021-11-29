@@ -1,4 +1,4 @@
-package petros.efthymiou.groovy
+package petros.efthymiou.groovy.playlist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
