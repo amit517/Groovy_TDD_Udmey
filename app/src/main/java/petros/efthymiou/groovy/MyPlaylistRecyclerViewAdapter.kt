@@ -1,20 +1,25 @@
 package petros.efthymiou.groovy
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-
+import androidx.recyclerview.widget.RecyclerView
 import petros.efthymiou.groovy.databinding.PlaylistItemBinding
 
 class MyPlaylistRecyclerViewAdapter(
-        private val values: List<Playlist>)
-    : RecyclerView.Adapter<MyPlaylistRecyclerViewAdapter.ViewHolder>() {
+    private val values: List<Playlist>
+) : RecyclerView.Adapter<MyPlaylistRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-    return ViewHolder(PlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            PlaylistItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
 
     }
 
