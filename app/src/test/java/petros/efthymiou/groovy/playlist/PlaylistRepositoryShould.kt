@@ -15,13 +15,15 @@ import petros.efthymiou.groovy.utils.BaseUnitTest
 class PlaylistRepositoryShould : BaseUnitTest() {
 
     private val service: PlaylistService = mock()
+    private val  mapper : PlaylistMapper = mock()
     private val playlists = mock<List<Playlist>>()
+    private val playlistRaw = mock<List<PlaylistRaw>>()
     private val exception = RuntimeException("Something went wrong")
 
     @Test
-    fun getPlaylistsFromService() = runBlockingTest {
+    fun getMappedPlaylistsFromService() = runBlockingTest {
 
-        val repository = PlaylistRepository(service)
+        val repository = mocSuccessfulCase()
 
         repository.getPlaylists()
 
@@ -29,7 +31,7 @@ class PlaylistRepositoryShould : BaseUnitTest() {
     }
 
     @Test
-    fun emitPlaylitsFromService() = runBlockingTest {
+    fun emitPlaylistsFromService() = runBlockingTest {
 
         val repository = mocSuccessfulCase()
 
@@ -43,24 +45,34 @@ class PlaylistRepositoryShould : BaseUnitTest() {
         assertEquals(exception,repository.getPlaylists().first().exceptionOrNull())
     }
 
+    @Test
+    fun delegateBusinessLogicToMapper() = runBlockingTest{
+        val repository = mocSuccessfulCase()
+
+        repository.getPlaylists().first()
+
+        verify(mapper,times(1)).invoke(playlistRaw)
+    }
+
     private suspend fun mockFailureCase(): PlaylistRepository {
         whenever(service.fetchPlaylists()).thenReturn(
             flow {
-                emit(Result.failure<List<Playlist>>(exception))
+                emit(Result.failure<List<PlaylistRaw>>(exception))
             }
         )
 
-        val repository = PlaylistRepository(service)
-        return repository
+        return PlaylistRepository(service,mapper)
     }
 
     private suspend fun mocSuccessfulCase(): PlaylistRepository {
         whenever(service.fetchPlaylists()).thenReturn(
             flow {
-                emit(Result.success(playlists))
+                emit(Result.success(playlistRaw))
             }
         )
 
-        return PlaylistRepository(service)
+        whenever(mapper.invoke(playlistRaw)).thenReturn(playlists)
+
+        return PlaylistRepository(service,mapper)
     }
 }
