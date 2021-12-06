@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import petros.efthymiou.groovy.R
 import petros.efthymiou.groovy.databinding.PlaylistItemBinding
 
 class MyPlaylistRecyclerViewAdapter(

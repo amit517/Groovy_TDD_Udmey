@@ -8,25 +8,37 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_playlist.*
+import kotlinx.android.synthetic.main.fragment_playlist.view.*
 import petros.efthymiou.groovy.R
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PlaylistFragment : Fragment() {
 
     lateinit var viewModel: PlaylistViewModel
+
+    @Inject
     lateinit var viewModelFactory: PlaylistViewModelFactory
-    private val service =PlaylistService(object :PlaylistApi{})
-    private val repository = PlaylistRepository(service)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_playlist, container, false)
         setupViewModel()
+
+        viewModel.loader.observe(this as LifecycleOwner, { loading ->
+            when(loading){
+                true -> loader.visibility = View.VISIBLE
+                false -> loader.visibility = View.GONE
+            }
+        })
 
         viewModel.playlists.observe(this as LifecycleOwner, { playlists ->
             if (playlists.getOrNull() != null) {
-                setupList(view, playlists.getOrNull()!!)
+                setupList(view.playlist_list, playlists.getOrNull()!!)
             }
         })
 
@@ -43,7 +55,6 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        viewModelFactory = PlaylistViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(PlaylistViewModel::class.java)
     }
 
