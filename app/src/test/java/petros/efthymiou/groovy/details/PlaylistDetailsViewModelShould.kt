@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Test
@@ -17,6 +18,8 @@ class PlaylistDetailsViewModelShould : BaseUnitTest() {
     private val id = "1"
     private val playlistDetails = mock<PlaylistDetails>()
     private val expected = Result.success(playlistDetails)
+    private val exception = RuntimeException("Something went wrong")
+    private val error = Result.failure<PlaylistDetails>(exception)
 
     init {
 
@@ -32,16 +35,35 @@ class PlaylistDetailsViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun emitPlaylistDetailsFromService() = runBlockingTest{
+    fun emitPlaylistDetailsFromService() = runBlockingTest {
         mockSuccessfulCase()
 
         Assert.assertEquals(expected, viewModel.playlistDetails.getValueForTest())
+    }
+
+    @Test
+    fun emitErrorWhenServiceFailed() {
+        mockErrorCase()
+
+        Assert.assertEquals(error, viewModel.playlistDetails.getValueForTest())
     }
 
     private suspend fun mockSuccessfulCase() {
         whenever(playlistDetailsService.fetchPlaylistDetails(id)).thenReturn(
             flow { emit(expected) }
         )
+
+        viewModel = PlaylistDetailsViewModel(playlistDetailsService)
+
+        viewModel.getPlaylistDetails(id)
+    }
+
+    private fun mockErrorCase(): Unit {
+        runBlocking {
+            whenever(playlistDetailsService.fetchPlaylistDetails(id)).thenReturn(
+                flow { emit(error) }
+            )
+        }
 
         viewModel = PlaylistDetailsViewModel(playlistDetailsService)
 
