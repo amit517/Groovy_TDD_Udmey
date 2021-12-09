@@ -30,20 +30,28 @@ class PlaylistFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_playlist, container, false)
         setupViewModel()
 
+        observeLoader()
+
+        observePlaylist(view)
+
+        return view
+    }
+
+    private fun observeLoader() {
         viewModel.loader.observe(this as LifecycleOwner, { loading ->
-            when(loading){
+            when (loading) {
                 true -> loader.visibility = View.VISIBLE
                 false -> loader.visibility = View.GONE
             }
         })
+    }
 
+    private fun observePlaylist(view: View) {
         viewModel.playlists.observe(this as LifecycleOwner, { playlists ->
             if (playlists.getOrNull() != null) {
                 setupList(view.playlist_list, playlists.getOrNull()!!)
             }
         })
-
-        return view
     }
 
     private fun setupList(
@@ -51,10 +59,11 @@ class PlaylistFragment : Fragment() {
         playlists: List<Playlist>
     ) {
         with(view as RecyclerView) {
-            adapter = MyPlaylistRecyclerViewAdapter(playlists,{id ->
-                val action = PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailFragment(id)
+            adapter = MyPlaylistRecyclerViewAdapter(playlists) { id ->
+                val action =
+                    PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailFragment(id)
                 findNavController().navigate(action)
-            })
+            }
         }
     }
 
