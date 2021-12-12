@@ -4,14 +4,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel (private val playlistDetailsService: PlaylistDetailsService) : ViewModel(){
     val playlistDetails: MutableLiveData<Result<PlaylistDetails>> = MutableLiveData()
+    val loader = MutableLiveData<Boolean>()
 
     fun getPlaylistDetails(id: String) {
         viewModelScope.launch{
-            playlistDetailsService.fetchPlaylistDetails(id).collect {
+            loader.postValue(true)
+            playlistDetailsService.fetchPlaylistDetails(id)
+                .onEach {
+                    loader.postValue(false)
+                }
+                .collect {
                 playlistDetails.postValue(it)
             }
         }

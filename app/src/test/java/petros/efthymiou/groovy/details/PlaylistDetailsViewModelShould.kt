@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Test
 import petros.efthymiou.groovy.utils.BaseUnitTest
+import petros.efthymiou.groovy.utils.captureValues
 import petros.efthymiou.groovy.utils.getValueForTest
 
 class PlaylistDetailsViewModelShould : BaseUnitTest() {
@@ -29,6 +30,8 @@ class PlaylistDetailsViewModelShould : BaseUnitTest() {
     fun getPlaylistDetailsFromService() = runBlockingTest {
         mockSuccessfulCase()
 
+        viewModel.getPlaylistDetails(id)
+
         viewModel.playlistDetails.getValueForTest()
 
         verify(playlistDetailsService, times(1)).fetchPlaylistDetails(id)
@@ -37,6 +40,8 @@ class PlaylistDetailsViewModelShould : BaseUnitTest() {
     @Test
     fun emitPlaylistDetailsFromService() = runBlockingTest {
         mockSuccessfulCase()
+
+        viewModel.getPlaylistDetails(id)
 
         Assert.assertEquals(expected, viewModel.playlistDetails.getValueForTest())
     }
@@ -48,14 +53,37 @@ class PlaylistDetailsViewModelShould : BaseUnitTest() {
         Assert.assertEquals(error, viewModel.playlistDetails.getValueForTest())
     }
 
+    @Test
+    fun showSpinnerWhileLoading() = runBlockingTest {
+        mockSuccessfulCase()
+
+        viewModel.loader.captureValues {
+            viewModel.getPlaylistDetails(id)
+
+            viewModel.playlistDetails.getValueForTest()
+
+            Assert.assertEquals(true, values[0])
+        }
+    }
+
+    @Test
+    fun closeLoaderAfterPlaylistDetailsLoad() = runBlockingTest{
+        mockSuccessfulCase()
+        viewModel.loader.captureValues {
+            viewModel.getPlaylistDetails(id)
+
+            viewModel.playlistDetails.getValueForTest()
+
+            Assert.assertEquals(false, values.last())
+        }
+    }
+
     private suspend fun mockSuccessfulCase() {
         whenever(playlistDetailsService.fetchPlaylistDetails(id)).thenReturn(
             flow { emit(expected) }
         )
 
         viewModel = PlaylistDetailsViewModel(playlistDetailsService)
-
-        viewModel.getPlaylistDetails(id)
     }
 
     private fun mockErrorCase(): Unit {

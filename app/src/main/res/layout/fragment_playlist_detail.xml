@@ -2,10 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playlistes_details_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".details.PlaylistDetailsFragment"
-    android:id="@+id/playlistes_details_root">
+    tools:context=".details.PlaylistDetailsFragment">
+
+    <ProgressBar
+        android:id="@+id/details_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxHeight="40dp"
+        android:minWidth="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -14,11 +27,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        tools:text="Hard Rock Cafe"
-        android:textSize="22sp"
         android:textColor="@color/design_default_color_primary"
+        android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Hard Rock Cafe" />
 
     <TextView
         android:id="@+id/playlist_details"
@@ -27,11 +40,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        tools:text="Playlist Details"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/playlist_name"
-        app:layout_constraintTop_toBottomOf="@+id/playlist_name" />
+        app:layout_constraintTop_toBottomOf="@+id/playlist_name"
+        tools:text="Playlist Details" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
