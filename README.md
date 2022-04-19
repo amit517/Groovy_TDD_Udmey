@@ -1,4 +1,4 @@
-# Groovy_TDD_Udmey
+# Groovy TDD Udmey
 
 Implementation of Android TDD Masterclass - Coroutines, Jetpack
 
